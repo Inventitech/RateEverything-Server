@@ -31,6 +31,13 @@ public class Application extends Controller {
 		return ok(result);
 	}
 
+	public static Result getLatestRating() {
+		Rating rating = Rating.find.all().get(Rating.find.all().size() - 1);
+		RatingRequest ratingRequest = new RatingRequest(rating.rating);
+		System.out.println(rating.rating);
+		return ok(new Gson().toJson(ratingRequest, RatingRequest.class));
+	}
+
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result addRating() {
 		JsonNode json = request().body().asJson();
