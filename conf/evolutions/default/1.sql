@@ -8,6 +8,12 @@ create table rating (
   recorded                  timestamp)
 ;
 
+create table user (
+  id                        varchar(255),
+  access_token              varchar(255),
+  registered                timestamp)
+;
+
 
 
 
@@ -16,6 +22,8 @@ create table rating (
 SET REFERENTIAL_INTEGRITY FALSE;
 
 drop table if exists rating;
+
+drop table if exists user;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 

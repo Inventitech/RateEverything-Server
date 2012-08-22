@@ -6,13 +6,21 @@ import models.Rating;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.libs.F.Function;
 import play.libs.Json;
+import play.libs.WS;
 import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
+import securesocial.core.java.SecureSocial;
+import securesocial.core.java.SocialUser;
 import views.html.index;
 import views.html.list;
 
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.exception.FacebookOAuthException;
+import com.restfb.types.User;
 import com.google.gson.Gson;
 
 public class Application extends Controller {
@@ -21,8 +29,15 @@ public class Application extends Controller {
 		return ok(index.render("Your new application is ready."));
 	}
 
+	@SecureSocial.Secured
 	public static Result list() {
-		return ok(list.render(Rating.find.all()));
+		SocialUser user = (SocialUser) ctx().args.get(SecureSocial.USER_KEY);
+		if (verifyFacebookToken(user.id.id, user.oAuth2Info.accessToken)) {
+			return ok(list.render(Rating.find.all(), user));
+		} else {
+			// TODO PRoper error handling
+			return badRequest(index.render(""));
+		}
 	}
 
 	public static Result getRatings() {
@@ -51,6 +66,22 @@ public class Application extends Controller {
 			Rating.createRating(ratingRequest.rating);
 			return ok("Added Rating");
 		}
+	}
+
+	/**
+	 * Verify if the given id matches the id returned using the accessToken.
+	 * THis also checks if the accesstoken is still valid
+	 */
+	public static boolean verifyFacebookToken(String id, String accessToken) {
+		try {
+			FacebookClient facebookClient = new DefaultFacebookClient(
+					accessToken);
+			User user = facebookClient.fetchObject("me", User.class);
+			return user.getId().equals(id);
+		} catch (FacebookOAuthException e) {
+			// Problem with authorization
+		}
+		return false;
 	}
 
 }
