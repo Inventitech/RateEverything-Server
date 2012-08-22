@@ -1,5 +1,6 @@
 package controllers;
 
+import json.RatingRequest;
 import models.Rating;
 
 import org.codehaus.jackson.JsonNode;
@@ -20,6 +21,7 @@ import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
+import com.google.gson.Gson;
 
 public class Application extends Controller {
 
@@ -48,13 +50,13 @@ public class Application extends Controller {
 	public static Result addRating() {
 		JsonNode json = request().body().asJson();
 		System.out.println(json);
-		Integer rating = Integer.parseInt(json.findPath("rating")
-				.getTextValue());
-		if (rating == null) {
+		RatingRequest ratingRequest = new Gson().fromJson(json.toString(),
+				RatingRequest.class);
+
+		if (ratingRequest == null) {
 			return badRequest("Missing parameter [rating]");
 		} else {
-			System.out.println(rating);
-			Rating.createRating(rating);
+			Rating.createRating(ratingRequest.rating);
 			return ok("Added Rating");
 		}
 	}

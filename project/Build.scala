@@ -24,7 +24,8 @@ object ApplicationBuild extends Build {
     )
 
     val appDependencies = Seq(
-      "com.restfb" % "restfb" % "1.6.9"
+      "com.restfb" % "restfb" % "1.6.9",
+ 		"com.google.code.gson" % "gson" % "2.2.2"
     )
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = JAVA).settings(
         resolvers ++= Seq( 
