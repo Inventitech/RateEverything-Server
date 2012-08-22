@@ -1,7 +1,7 @@
-@(ratings: List[Rating])
+@(ratings: List[Rating], user: securesocial.core.java.SocialUser)
 
 @main("List of Ratings") {
-	<h1>List of Ratings</h1>
+	<h1>List of Ratings for @user.displayName</h1>
 	<table class="table table-striped">
 		<thead>
     		<tr>
@@ -17,4 +17,24 @@
     	</tr>
     	}
 	</table>
+	
+	@if( user.oAuth1Info != null ) {
+    <h2>OAuth1 Info</h2>
+
+    <ul>
+        <li>Token: @user.oAuth1Info.token</li>
+        <li>Secret: @user.oAuth1Info.secret</li>
+    </ul>
+    }
+
+    @if( user.oAuth2Info != null) {
+    <h2>OAuth2 Info</h2>
+
+    <ul>
+        <li>Access Token: @user.oAuth2Info.accessToken</li>
+        @if( user.oAuth2Info.tokenType != null ) { <li>Token Type: @user.oAuth2Info.tokenType</li> }
+        @if( user.oAuth2Info.expiresIn != null ) { <li>Expires in: @user.oAuth2Info.expiresIn seconds</li> }
+        @if( user.oAuth2Info.refreshToken != null ) { <li>Refresh Token: @user.oAuth2Info.refreshToken</li> }
+    </ul>
+    }
 }

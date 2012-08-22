@@ -3,6 +3,7 @@ package models;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 import play.data.validation.Constraints;
 import play.db.ebean.Model;
@@ -17,6 +18,9 @@ public class Rating extends Model {
 
 	@Constraints.Required
 	public Date recorded = new Date();
+	
+	//@ManyToOne
+	//public User user;
 
 	public static Finder<Integer, Rating> find = new Finder<Integer, Rating>(
 			Integer.class, Rating.class);
